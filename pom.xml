@@ -9,6 +9,7 @@
     <properties>
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <generated.sources.dir>${project.build.directory}/main/java/com/zhsu/lox</generated.sources.dir>
     </properties>
 
     <build>
@@ -24,14 +25,37 @@
                 </configuration>
             </plugin>
 
-            <!-- Maven Exec Plugin -->
+            <!-- Maven Exec Plugin (For running both Lox and GenerateAst) -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
-                <configuration>
-                    <mainClass>com.zhsu.lox.Lox</mainClass>
-                </configuration>
+                <executions>
+                    <!-- Execution for running Lox -->
+                    <execution>
+                        <id>run-lox</id> <!-- Unique ID for this execution -->
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>com.zhsu.lox.Lox</mainClass>
+                        </configuration>
+                    </execution>
+
+                    <!-- Execution for running GenerateAst -->
+                    <execution>
+                        <id>generate-ast</id> <!-- Unique ID for this execution -->
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>com.zhsu.tool.GenerateAst</mainClass>
+                            <arguments>
+                                <argument>${project.build.directory}/src/main/java/com/zhsu/lox</argument> <!-- Provide output directory here -->
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <!-- Maven Jar Plugin -->
