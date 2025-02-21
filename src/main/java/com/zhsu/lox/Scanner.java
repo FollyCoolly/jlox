@@ -9,6 +9,7 @@ import static com.zhsu.lox.TokenType.AND;
 import static com.zhsu.lox.TokenType.BANG;
 import static com.zhsu.lox.TokenType.BANG_EQUAL;
 import static com.zhsu.lox.TokenType.CLASS;
+import static com.zhsu.lox.TokenType.COLON;
 import static com.zhsu.lox.TokenType.COMMA;
 import static com.zhsu.lox.TokenType.DOT;
 import static com.zhsu.lox.TokenType.ELSE;
@@ -32,6 +33,7 @@ import static com.zhsu.lox.TokenType.NUMBER;
 import static com.zhsu.lox.TokenType.OR;
 import static com.zhsu.lox.TokenType.PLUS;
 import static com.zhsu.lox.TokenType.PRINT;
+import static com.zhsu.lox.TokenType.QUESTION;
 import static com.zhsu.lox.TokenType.RETURN;
 import static com.zhsu.lox.TokenType.RIGHT_BRACE;
 import static com.zhsu.lox.TokenType.RIGHT_PAREN;
@@ -103,6 +105,10 @@ class Scanner {
                 addToken(RIGHT_BRACE);
             case ',' ->
                 addToken(COMMA);
+            case ':' ->
+                addToken(COLON);
+            case '?' ->
+                addToken(QUESTION);
             case '.' ->
                 addToken(DOT);
             case '-' ->

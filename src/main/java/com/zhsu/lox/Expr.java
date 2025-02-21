@@ -13,6 +13,8 @@ abstract class Expr {
         R visitLiteralExpr(Literal expr);
 
         R visitUnaryExpr(Unary expr);
+
+        R visitConditionalExpr(Conditional expr);
     }
 
     static class Binary extends Expr {
@@ -75,6 +77,24 @@ abstract class Expr {
 
         final Token operator;
         final Expr right;
+    }
+
+    static class Conditional extends Expr {
+
+        Conditional(Expr condition, Expr trueValue, Expr FalseValue) {
+            this.condition = condition;
+            this.trueValue = trueValue;
+            this.FalseValue = FalseValue;
+        }
+
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitConditionalExpr(this);
+        }
+
+        final Expr condition;
+        final Expr trueValue;
+        final Expr FalseValue;
     }
 
 }

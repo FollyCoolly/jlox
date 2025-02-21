@@ -1,11 +1,13 @@
 package com.zhsu.lox;
 
 import java.util.List;
+import java.util.Stack;
 import java.util.function.Supplier;
 
 import static com.zhsu.lox.TokenType.BANG;
 import static com.zhsu.lox.TokenType.BANG_EQUAL;
 import static com.zhsu.lox.TokenType.CLASS;
+import static com.zhsu.lox.TokenType.COLON;
 import static com.zhsu.lox.TokenType.COMMA;
 import static com.zhsu.lox.TokenType.EOF;
 import static com.zhsu.lox.TokenType.EQUAL_EQUAL;
@@ -23,6 +25,7 @@ import static com.zhsu.lox.TokenType.NIL;
 import static com.zhsu.lox.TokenType.NUMBER;
 import static com.zhsu.lox.TokenType.PLUS;
 import static com.zhsu.lox.TokenType.PRINT;
+import static com.zhsu.lox.TokenType.QUESTION;
 import static com.zhsu.lox.TokenType.RETURN;
 import static com.zhsu.lox.TokenType.RIGHT_PAREN;
 import static com.zhsu.lox.TokenType.SEMICOLON;
@@ -57,7 +60,7 @@ class Parser {
         return commaed();
     }
 
-    private Expr parseLeftAssociative(Supplier<Expr> operandParser, TokenType... operators) {
+    private Expr parseLeftAssociativeBinary(Supplier<Expr> operandParser, TokenType... operators) {
         Expr expr = operandParser.get();
 
         while (match(operators)) {
@@ -70,23 +73,55 @@ class Parser {
     }
 
     private Expr commaed() {
-        return parseLeftAssociative(this::equality, COMMA);
+        return parseLeftAssociativeBinary(this::conditional, COMMA);
+    }
+
+    private Expr conditional() {
+        Expr expr = equality();
+
+        Stack<Expr> exprsStack = new Stack<>();
+        exprsStack.push(expr);
+        Stack<Token> tokenStack = new Stack<>(); // just for tracking error token
+        while (match(QUESTION, COLON)) {
+            Token token = previous();
+            expr = equality();
+
+            if (token.type == QUESTION) {
+                exprsStack.push(expr);
+                tokenStack.push(token);
+            } else {
+                if (!tokenStack.empty()) {
+                    Expr trueValue = exprsStack.pop();
+                    tokenStack.pop();
+                    Expr conditon = exprsStack.pop();
+                    Expr conditonal = new Expr.Conditional(conditon, trueValue, expr);
+                    exprsStack.push(conditonal);
+                } else {
+                    throw error(token, "can not find corresponding '?' for ':'");
+                }
+            }
+        }
+
+        if (!tokenStack.empty()) {
+            throw error(tokenStack.pop(), "can not find corresponding ':' for '?'");
+        }
+        return exprsStack.pop();
     }
 
     private Expr equality() {
-        return parseLeftAssociative(this::comparison, BANG_EQUAL, EQUAL_EQUAL);
+        return parseLeftAssociativeBinary(this::comparison, BANG_EQUAL, EQUAL_EQUAL);
     }
 
     private Expr comparison() {
-        return parseLeftAssociative(this::term, GREATER, GREATER_EQUAL, LESS, LESS_EQUAL);
+        return parseLeftAssociativeBinary(this::term, GREATER, GREATER_EQUAL, LESS, LESS_EQUAL);
     }
 
     private Expr term() {
-        return parseLeftAssociative(this::factor, PLUS, MINUS);
+        return parseLeftAssociativeBinary(this::factor, PLUS, MINUS);
     }
 
     private Expr factor() {
-        return parseLeftAssociative(this::unary, STAR, SLASH);
+        return parseLeftAssociativeBinary(this::unary, STAR, SLASH);
     }
 
     private Expr unary() {
