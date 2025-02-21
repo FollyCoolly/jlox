@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 import static com.zhsu.lox.TokenType.BANG;
 import static com.zhsu.lox.TokenType.BANG_EQUAL;
 import static com.zhsu.lox.TokenType.CLASS;
+import static com.zhsu.lox.TokenType.COMMA;
 import static com.zhsu.lox.TokenType.EOF;
 import static com.zhsu.lox.TokenType.EQUAL_EQUAL;
 import static com.zhsu.lox.TokenType.FALSE;
@@ -53,7 +54,7 @@ class Parser {
     }
 
     private Expr expression() {
-        return equality();
+        return commaed();
     }
 
     private Expr parseLeftAssociative(Supplier<Expr> operandParser, TokenType... operators) {
@@ -66,6 +67,10 @@ class Parser {
         }
 
         return expr;
+    }
+
+    private Expr commaed() {
+        return parseLeftAssociative(this::equality, COMMA);
     }
 
     private Expr equality() {

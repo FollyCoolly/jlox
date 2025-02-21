@@ -8,7 +8,7 @@ public class ParserTest {
 
     @Test
     public void testScanner() {
-        String input = "8 == 1 * 5 + 1";
+        String input = "1 + 1, 2 * 3";
 
         Scanner scanner = new Scanner(input);
 
