@@ -3,6 +3,9 @@ package com.zhsu.lox;
 public class AstPrinter implements Expr.Visitor<String> {
 
     String print(Expr expr) {
+        if (expr == null) {
+            return "[null expression]";
+        }
         return expr.accept(this);
     }
 

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 public class ParserTest {
 
     @Test
-    public void testScanner() {
+    public void testParser() {
         String input = "1 ? 2 ? 3: 4: 5, 2 * 3";
 
         Scanner scanner = new Scanner(input);
