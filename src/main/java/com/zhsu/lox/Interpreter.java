@@ -4,6 +4,15 @@ import com.zhsu.lox.Expr.Conditional;
 
 class Interpreter implements Expr.Visitor<Object> {
 
+    void interpret(Expr expression) {
+        try {
+            Object value = evaluate(expression);
+            System.out.println(stringify(value));
+        } catch (RuntimeError error) {
+            Lox.runtimeError(error);
+        }
+    }
+
     private Object evaluate(Expr expr) {
         return expr.accept(this);
     }
@@ -34,32 +43,6 @@ class Interpreter implements Expr.Visitor<Object> {
                 return null;
             }
         }
-    }
-
-    private void checkNumberOperand(Token operator, Object operand) {
-        if (operand instanceof Double) {
-            return;
-        }
-        throw new RuntimeError(operator, "Operand must be a number.");
-    }
-
-    private void checkNumberOperands(Token operator,
-            Object left, Object right) {
-        if (left instanceof Double && right instanceof Double) {
-            return;
-        }
-
-        throw new RuntimeError(operator, "Operands must be numbers.");
-    }
-
-    private boolean isTruthy(Object object) {
-        if (object == null) {
-            return false;
-        }
-        if (object instanceof Boolean) {
-            return (boolean) object;
-        }
-        return true;
     }
 
     @Override
@@ -120,6 +103,42 @@ class Interpreter implements Expr.Visitor<Object> {
         }
     }
 
+    @Override
+    public Object visitConditionalExpr(Conditional expr) {
+        Object cond = evaluate(expr.condition);
+        if (isTruthy(cond)) {
+            return evaluate(expr.trueValue);
+        } else {
+            return evaluate(expr.FalseValue);
+        }
+    }
+
+    private void checkNumberOperand(Token operator, Object operand) {
+        if (operand instanceof Double) {
+            return;
+        }
+        throw new RuntimeError(operator, "Operand must be a number.");
+    }
+
+    private void checkNumberOperands(Token operator,
+            Object left, Object right) {
+        if (left instanceof Double && right instanceof Double) {
+            return;
+        }
+
+        throw new RuntimeError(operator, "Operands must be numbers.");
+    }
+
+    private boolean isTruthy(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (object instanceof Boolean) {
+            return (boolean) object;
+        }
+        return true;
+    }
+
     private boolean isEqual(Object a, Object b) {
         if (a == null && b == null) {
             return true;
@@ -131,13 +150,20 @@ class Interpreter implements Expr.Visitor<Object> {
         return a.equals(b);
     }
 
-    @Override
-    public Object visitConditionalExpr(Conditional expr) {
-        Object cond = evaluate(expr.condition);
-        if (isTruthy(cond)) {
-            return evaluate(expr.trueValue);
-        } else {
-            return evaluate(expr.FalseValue);
+    private String stringify(Object object) {
+        if (object == null) {
+            return "nil";
         }
+
+        if (object instanceof Double) {
+            String text = object.toString();
+            if (text.endsWith(".0")) {
+                text = text.substring(0, text.length() - 2);
+            }
+            return text;
+        }
+
+        return object.toString();
     }
+
 }
