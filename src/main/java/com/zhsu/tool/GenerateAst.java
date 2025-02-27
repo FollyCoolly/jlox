@@ -21,6 +21,11 @@ public class GenerateAst {
                 "Unary       : Token operator, Expr right",
                 "Conditional : Expr condition, Expr trueValue, Expr FalseValue"
         ));
+
+        defineAst(outputDir, "Stmt", Arrays.asList(
+                "Expression : Expr expression",
+                "Print      : Expr expression"
+        ));
     }
 
     public static void defineAst(
