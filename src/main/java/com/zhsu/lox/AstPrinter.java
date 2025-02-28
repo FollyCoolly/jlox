@@ -1,12 +1,29 @@
 package com.zhsu.lox;
 
-public class AstPrinter implements Expr.Visitor<String> {
+public class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
 
     String print(Expr expr) {
         if (expr == null) {
             return "[null expression]";
         }
         return expr.accept(this);
+    }
+
+    String print(Stmt stmt) {
+        if (stmt == null) {
+            return "[null expression]";
+        }
+        return stmt.accept(this);
+    }
+
+    @Override
+    public String visitExpressionStmt(Stmt.Expression stmt) {
+        return "ExpressionStmt " + stmt.expression.accept(this);
+    }
+
+    @Override
+    public String visitPrintStmt(Stmt.Print stmt) {
+        return "PrintStmt " + stmt.expression.accept(this);
     }
 
     @Override
