@@ -15,6 +15,8 @@ abstract class Expr {
         R visitUnaryExpr(Unary expr);
 
         R visitConditionalExpr(Conditional expr);
+
+        R visitVariableExpr(Variable expr);
     }
 
     static class Binary extends Expr {
@@ -95,6 +97,20 @@ abstract class Expr {
         final Expr condition;
         final Expr trueValue;
         final Expr FalseValue;
+    }
+
+    static class Variable extends Expr {
+
+        Variable(Token name) {
+            this.name = name;
+        }
+
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitVariableExpr(this);
+        }
+
+        final Token name;
     }
 
 }

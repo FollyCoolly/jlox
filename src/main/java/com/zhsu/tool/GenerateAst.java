@@ -19,12 +19,14 @@ public class GenerateAst {
                 "Grouping    : Expr expression",
                 "Literal     : Object value",
                 "Unary       : Token operator, Expr right",
-                "Conditional : Expr condition, Expr trueValue, Expr FalseValue"
+                "Conditional : Expr condition, Expr trueValue, Expr FalseValue",
+                "Variable    : Token name"
         ));
 
         defineAst(outputDir, "Stmt", Arrays.asList(
                 "Expression : Expr expression",
-                "Print      : Expr expression"
+                "Print      : Expr expression",
+                "Var        : Token name, Expr initializer"
         ));
     }
 
