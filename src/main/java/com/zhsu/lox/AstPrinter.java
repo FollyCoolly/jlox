@@ -27,6 +27,17 @@ public class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
     }
 
     @Override
+    public String visitVarStmt(Stmt.Var stmt) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("VarStmt ").append(stmt.name.toString());
+        if (stmt.initializer != null) {
+            builder.append("=");
+            builder.append(stmt.initializer.accept(this));
+        }
+        return builder.toString();
+    }
+
+    @Override
     public String visitBinaryExpr(Expr.Binary expr) {
         return parenthesize(expr.operator.lexeme,
                 expr.left, expr.right);
@@ -43,6 +54,11 @@ public class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
             return "nil";
         }
         return expr.value.toString();
+    }
+
+    @Override
+    public String visitVariableExpr(Expr.Variable expr) {
+        return expr.name.toString();
     }
 
     @Override
