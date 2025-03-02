@@ -122,7 +122,26 @@ class Parser {
     }
 
     private Expr commaed() {
-        return parseLeftAssociativeBinary(this::conditional, COMMA);
+        return parseLeftAssociativeBinary(this::assignment, COMMA);
+    }
+
+    private Expr assignment() {
+        Expr expr = conditional();
+
+        if (match(EQUAL)) {
+            Token equals = previous();
+            Expr value = assignment(); // assignment is right-associative
+
+            if (expr instanceof Expr.Variable) {
+                Token name = ((Expr.Variable) expr).name;
+                return new Expr.Assign(name, value);
+            }
+
+            //  we don’t throw it because the parser isn’t in a confused state where we need to go into panic mode and synchronize.
+            error(equals, "Invalid assignment target.");
+        }
+
+        return expr;
     }
 
     private Expr conditional() {
