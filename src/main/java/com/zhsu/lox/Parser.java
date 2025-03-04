@@ -99,7 +99,7 @@ class Parser {
     }
 
     private Stmt printStatement() {
-        
+
         Expr value = expression();
         consume(SEMICOLON, "Expect ';' after value. for print stmt");
         return new Stmt.Print(value);
@@ -107,8 +107,11 @@ class Parser {
 
     private Stmt expressionStatement() {
         Expr expr = expression();
-        consume(SEMICOLON, "Expect ';' after expression.");
-        return new Stmt.Expression(expr);
+        if (match(SEMICOLON)) {
+            return new Stmt.Expression(expr);
+        }
+        // consume(SEMICOLON, "Expect ';' after expression.");
+        return new Stmt.Print(expr); // treat single expr as print stmt
     }
 
     private List<Stmt> block() {
