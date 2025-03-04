@@ -10,6 +10,7 @@ import static com.zhsu.lox.TokenType.BANG_EQUAL;
 import static com.zhsu.lox.TokenType.CLASS;
 import static com.zhsu.lox.TokenType.COLON;
 import static com.zhsu.lox.TokenType.COMMA;
+import static com.zhsu.lox.TokenType.ELSE;
 import static com.zhsu.lox.TokenType.EOF;
 import static com.zhsu.lox.TokenType.EQUAL;
 import static com.zhsu.lox.TokenType.EQUAL_EQUAL;
@@ -88,6 +89,9 @@ class Parser {
     }
 
     private Stmt statement() {
+        if (match(IF)) {
+            return ifStatement();
+        }
         if (match(PRINT)) {
             return printStatement();
         }
@@ -96,6 +100,20 @@ class Parser {
         }
 
         return expressionStatement();
+    }
+
+    private Stmt ifStatement() {
+        consume(LEFT_PAREN, "Expect '(' after 'if'.");
+        Expr condition = expression();
+        consume(RIGHT_PAREN, "Expect ')' after if condition.");
+
+        Stmt thenBranch = statement();
+        Stmt elseBranch = null;
+        if (match(ELSE)) {
+            elseBranch = statement();
+        }
+
+        return new Stmt.If(condition, thenBranch, elseBranch);
     }
 
     private Stmt printStatement() {
