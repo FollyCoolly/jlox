@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Stack;
 import java.util.function.Supplier;
 
+import static com.zhsu.lox.TokenType.AND;
 import static com.zhsu.lox.TokenType.BANG;
 import static com.zhsu.lox.TokenType.BANG_EQUAL;
 import static com.zhsu.lox.TokenType.CLASS;
@@ -28,6 +29,7 @@ import static com.zhsu.lox.TokenType.LESS_EQUAL;
 import static com.zhsu.lox.TokenType.MINUS;
 import static com.zhsu.lox.TokenType.NIL;
 import static com.zhsu.lox.TokenType.NUMBER;
+import static com.zhsu.lox.TokenType.OR;
 import static com.zhsu.lox.TokenType.PLUS;
 import static com.zhsu.lox.TokenType.PRINT;
 import static com.zhsu.lox.TokenType.QUESTION;
@@ -183,14 +185,14 @@ class Parser {
     }
 
     private Expr conditional() {
-        Expr expr = equality();
+        Expr expr = or();
 
         Stack<Expr> exprsStack = new Stack<>();
         exprsStack.push(expr);
         Stack<Token> tokenStack = new Stack<>(); // just for tracking error token
         while (match(QUESTION, COLON)) {
             Token token = previous();
-            expr = equality();
+            expr = or();
 
             if (token.type == QUESTION) {
                 exprsStack.push(expr);
@@ -212,6 +214,30 @@ class Parser {
             throw error(tokenStack.pop(), "can not find corresponding ':' for '?'");
         }
         return exprsStack.pop();
+    }
+
+    private Expr or() {
+        Expr expr = and();
+
+        while (match(OR)) {
+            Token operator = previous();
+            Expr right = and();
+            expr = new Expr.Logical(expr, operator, right);
+        }
+
+        return expr;
+    }
+
+    private Expr and() {
+        Expr expr = equality();
+
+        while (match(AND)) {
+            Token operator = previous();
+            Expr right = equality();
+            expr = new Expr.Logical(expr, operator, right);
+        }
+
+        return expr;
     }
 
     private Expr equality() {
