@@ -38,6 +38,17 @@ public class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
     }
 
     @Override
+    public String visitBlockStmt(Stmt.Block stmt) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("{");
+        for (Stmt innerStmt : stmt.statements) {
+            builder.append(innerStmt.accept(this));
+        }
+        builder.append("}\n");
+        return builder.toString();
+    }
+
+    @Override
     public String visitAssignExpr(Expr.Assign expr) {
         return "(" + expr.name.toString() + "=" + expr.value.toString() + ")";
     }

@@ -20,6 +20,7 @@ import static com.zhsu.lox.TokenType.GREATER;
 import static com.zhsu.lox.TokenType.GREATER_EQUAL;
 import static com.zhsu.lox.TokenType.IDENTIFIER;
 import static com.zhsu.lox.TokenType.IF;
+import static com.zhsu.lox.TokenType.LEFT_BRACE;
 import static com.zhsu.lox.TokenType.LEFT_PAREN;
 import static com.zhsu.lox.TokenType.LESS;
 import static com.zhsu.lox.TokenType.LESS_EQUAL;
@@ -30,6 +31,7 @@ import static com.zhsu.lox.TokenType.PLUS;
 import static com.zhsu.lox.TokenType.PRINT;
 import static com.zhsu.lox.TokenType.QUESTION;
 import static com.zhsu.lox.TokenType.RETURN;
+import static com.zhsu.lox.TokenType.RIGHT_BRACE;
 import static com.zhsu.lox.TokenType.RIGHT_PAREN;
 import static com.zhsu.lox.TokenType.SEMICOLON;
 import static com.zhsu.lox.TokenType.SLASH;
@@ -89,11 +91,15 @@ class Parser {
         if (match(PRINT)) {
             return printStatement();
         }
+        if (match(LEFT_BRACE)) {
+            return new Stmt.Block(block());
+        }
 
         return expressionStatement();
     }
 
     private Stmt printStatement() {
+        
         Expr value = expression();
         consume(SEMICOLON, "Expect ';' after value. for print stmt");
         return new Stmt.Print(value);
@@ -103,6 +109,17 @@ class Parser {
         Expr expr = expression();
         consume(SEMICOLON, "Expect ';' after expression.");
         return new Stmt.Expression(expr);
+    }
+
+    private List<Stmt> block() {
+        List<Stmt> statements = new ArrayList<>();
+
+        while (!check(RIGHT_BRACE) && !isAtEnd()) {
+            statements.add(declaration());
+        }
+
+        consume(RIGHT_BRACE, "Expect '}' after block.");
+        return statements;
     }
 
     private Expr expression() {
