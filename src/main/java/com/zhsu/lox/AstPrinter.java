@@ -116,6 +116,11 @@ public class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
         return parenthesize("?:", expr.condition, expr.trueValue, expr.FalseValue);
     }
 
+    @Override
+    public String visitCallExpr(Expr.Call expr) {
+        return parenthesize(expr.callee.accept(this), expr.arguments.toArray(new Expr[0]));
+    }
+
     private String parenthesize(String name, Expr... exprs) {
         StringBuilder builder = new StringBuilder();
 
