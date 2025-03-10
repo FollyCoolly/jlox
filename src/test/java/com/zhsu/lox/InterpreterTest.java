@@ -9,25 +9,12 @@ public class InterpreterTest {
     @Test
     public void testInterpreter() {
         String input = """
-                       var a = "global a";\r
-                       var b = "global b";\r
-                       var c = "global c";\r
-                       {\r
-                         var a = "outer a";\r
-                         var b = "outer b";\r
-                         {\r
-                           var a = "inner a";\r
-                           print a;\r
-                           print b;\r
-                           print c;\r
-                         }\r
-                         print a;\r
-                         print b;\r
-                         print c;\r
-                       }\r
-                       print a;\r
-                       print b;\r
-                       print c;""";
+fun sayHi(first, last) {
+  print "Hi, " + first + " " + last + "!";
+}
+
+sayHi("Dear", "Reader");
+            """;
 
         Scanner scanner = new Scanner(input);
 

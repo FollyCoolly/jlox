@@ -372,15 +372,15 @@ class Parser {
                 if (arguments.size() >= 255) {
                     error(peek(), "Can't have more than 255 arguments.");
                 }
-                arguments.add(expression());
+                arguments.add(assignment()); // skip parsing commaed
             } while (match(COMMA));
+            }  Token paren = consume(RIGHT_PAREN,
+                    "Expect ')' after arguments.");
+
+            return new Expr.Call(callee, paren, arguments);
         }
 
-        Token paren = consume(RIGHT_PAREN,
-                "Expect ')' after arguments.");
-
-        return new Expr.Call(callee, paren, arguments);
-    }
+    
 
     private Expr primary() {
         if (match(FALSE)) {
