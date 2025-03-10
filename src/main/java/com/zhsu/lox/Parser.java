@@ -135,6 +135,9 @@ class Parser {
             if (match(VAR)) {
                 return varDeclaration();
             }
+            if (match(FUN)) {
+                return function("function");
+            }
 
             return statement();
         } catch (ParseError error) {
@@ -192,6 +195,28 @@ class Parser {
         }
         // consume(SEMICOLON, "Expect ';' after expression.");
         return new Stmt.Print(expr); // treat single expr as print stmt
+    }
+
+    private Stmt.Function function(String kind) {
+        Token name = consume(IDENTIFIER, "Expect " + kind + " name.");
+        consume(LEFT_PAREN, "Expect '(' after " + kind + " name.");
+        List<Token> parameters = new ArrayList<>();
+        if (!check(RIGHT_PAREN)) {
+            do {
+                if (parameters.size() >= 255) {
+                    error(peek(), "Can't have more than 255 parameters.");
+                }
+
+                parameters.add(
+                        consume(IDENTIFIER, "Expect parameter name."));
+            } while (match(COMMA));
+        }
+        consume(RIGHT_PAREN, "Expect ')' after parameters.");
+
+        // Consuming LEFT_BRACE here lets us report a more precise error message if the LEFT_BRACE isn’t found 
+        consume(LEFT_BRACE, "Expect '{' before " + kind + " body.");
+        List<Stmt> body = block();
+        return new Stmt.Function(name, parameters, body);
     }
 
     private List<Stmt> block() {

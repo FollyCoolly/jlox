@@ -22,6 +22,11 @@ public class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
     }
 
     @Override
+    public String visitFunctionStmt(Stmt.Function stmt) {
+        return "FunctionStmt" + stmt.toString();
+    }
+
+    @Override
     public String visitIfStmt(Stmt.If stmt) {
         StringBuilder builder = new StringBuilder();
         builder.append("(if ");
