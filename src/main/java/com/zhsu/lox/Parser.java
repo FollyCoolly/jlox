@@ -76,6 +76,9 @@ class Parser {
         if (match(PRINT)) {
             return printStatement();
         }
+        if (match(RETURN)) {
+            return returnStatement();
+        }
         if (match(WHILE)) {
             return whileStatement();
         }
@@ -186,6 +189,17 @@ class Parser {
         Expr value = expression();
         consume(SEMICOLON, "Expect ';' after value. for print stmt");
         return new Stmt.Print(value);
+    }
+
+    private Stmt returnStatement() {
+        Token keyword = previous();
+        Expr value = null;
+        if (!check(SEMICOLON)) {
+            value = expression();
+        }
+
+        consume(SEMICOLON, "Expect ';' after return value.");
+        return new Stmt.Return(keyword, value);
     }
 
     private Stmt expressionStatement() {
@@ -374,13 +388,12 @@ class Parser {
                 }
                 arguments.add(assignment()); // skip parsing commaed
             } while (match(COMMA));
-            }  Token paren = consume(RIGHT_PAREN,
-                    "Expect ')' after arguments.");
-
-            return new Expr.Call(callee, paren, arguments);
         }
+        Token paren = consume(RIGHT_PAREN,
+                "Expect ')' after arguments.");
 
-    
+        return new Expr.Call(callee, paren, arguments);
+    }
 
     private Expr primary() {
         if (match(FALSE)) {

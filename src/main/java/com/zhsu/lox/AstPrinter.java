@@ -46,6 +46,11 @@ public class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
     }
 
     @Override
+    public String visitReturnStmt(Stmt.Return stmt) {
+        return "Return" + stmt.value.accept(this);
+    }
+
+    @Override
     public String visitVarStmt(Stmt.Var stmt) {
         StringBuilder builder = new StringBuilder();
         builder.append("VarStmt ").append(stmt.name.toString());
