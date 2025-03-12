@@ -9,19 +9,15 @@ public class InterpreterTest {
     @Test
     public void testInterpreter() {
         String input = """
-fun makeCounter() {
-  var i = 0;
-  fun count() {
-    i = i + 1;
-    print i;
+fun thrice(fn) {
+  for (var i = 1; i <= 3; i = i + 1) {
+    fn(i);
   }
-
-  return count;
 }
 
-var counter = makeCounter();
-counter(); 
-counter(); 
+thrice(fun (a) {
+  print a;
+});
             """;
 
         Scanner scanner = new Scanner(input);
