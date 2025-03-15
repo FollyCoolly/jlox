@@ -28,6 +28,10 @@ thrice(fun (a) {
         List<Stmt> statements = parser.parse();
 
         Interpreter interpreter = new Interpreter();
+
+        Resolver resolver = new Resolver(interpreter);
+        resolver.resolve(statements);
+
         interpreter.interpret(statements);
     }
 }
