@@ -9,15 +9,13 @@ public class InterpreterTest {
     @Test
     public void testInterpreter() {
         String input = """
-fun thrice(fn) {
-  for (var i = 1; i <= 3; i = i + 1) {
-    fn(i);
+class DevonshireCream {
+  serveOn() {
+    return "Scones";
   }
 }
 
-thrice(fun (a) {
-  print a;
-});
+print DevonshireCream;
             """;
 
         Scanner scanner = new Scanner(input);
