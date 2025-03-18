@@ -9,13 +9,9 @@ public class InterpreterTest {
     @Test
     public void testInterpreter() {
         String input = """
-class DevonshireCream {
-  serveOn() {
-    return "Scones";
-  }
-}
-
-print DevonshireCream;
+class Bagel {}
+var bagel = Bagel();
+print bagel; 
             """;
 
         Scanner scanner = new Scanner(input);
