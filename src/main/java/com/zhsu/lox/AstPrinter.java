@@ -137,6 +137,16 @@ public class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
     }
 
     @Override
+    public String visitGetExpr(Expr.Get expr) {
+        return expr.object.accept(this) + "." + expr.name.lexeme;
+    }
+
+    @Override
+    public String visitSetExpr(Expr.Set expr) {
+        return "set " + expr.object.accept(this) + "." + expr.name.lexeme;
+    }
+
+    @Override
     public String visitLambdaExpr(Expr.Lambda expr) {
         return "<anonymous fn>";
     }

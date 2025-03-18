@@ -12,6 +12,7 @@ import static com.zhsu.lox.TokenType.BANG_EQUAL;
 import static com.zhsu.lox.TokenType.CLASS;
 import static com.zhsu.lox.TokenType.COLON;
 import static com.zhsu.lox.TokenType.COMMA;
+import static com.zhsu.lox.TokenType.DOT;
 import static com.zhsu.lox.TokenType.ELSE;
 import static com.zhsu.lox.TokenType.EOF;
 import static com.zhsu.lox.TokenType.EQUAL;
@@ -291,6 +292,9 @@ class Parser {
             if (expr instanceof Expr.Variable) {
                 Token name = ((Expr.Variable) expr).name;
                 return new Expr.Assign(name, value);
+            } else if (expr instanceof Expr.Get) {
+                Expr.Get get = (Expr.Get) expr;
+                return new Expr.Set(get.object, get.name, value);
             }
 
             //  we don’t throw it because the parser isn’t in a confused state where we need to go into panic mode and synchronize.
@@ -388,6 +392,10 @@ class Parser {
         while (true) {
             if (match(LEFT_PAREN)) {
                 expr = finishCall(expr);
+            } else if (match(DOT)) {
+                Token name = consume(IDENTIFIER,
+                        "Expect property name after '.'.");
+                expr = new Expr.Get(expr, name);
             } else {
                 break;
             }
