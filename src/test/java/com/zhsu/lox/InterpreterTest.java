@@ -9,10 +9,14 @@ public class InterpreterTest {
     @Test
     public void testInterpreter() {
         String input = """
-class Bagel {}
-var bagel = Bagel();
-print bagel; 
-            """;
+                class Bacon {
+                  eat() {
+                    print "Crunch crunch crunch!";
+                  }
+                }
+
+                Bacon().eat();
+                            """;
 
         Scanner scanner = new Scanner(input);
 
