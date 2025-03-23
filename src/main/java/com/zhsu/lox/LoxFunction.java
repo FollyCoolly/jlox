@@ -7,10 +7,10 @@ class LoxFunction implements LoxCallable {
     private final List<Token> params;
     private final List<Stmt> body;
     private final Environment closure;
-    private final String name;
+    private final Token name;
 
     LoxFunction(Stmt.Function declaration, Environment closure) {
-        this.name = declaration.name.lexeme;
+        this.name = declaration.name;
         this.params = declaration.params;
         this.body = declaration.body;
         this.closure = closure;
@@ -21,6 +21,13 @@ class LoxFunction implements LoxCallable {
         this.params = lambda.params;
         this.body = lambda.body;
         this.closure = closure;
+    }
+
+    LoxFunction bind(LoxInstance instance) {
+        Environment environment = new Environment(closure);
+        environment.define("this", instance);
+        return new LoxFunction(new Stmt.Function(name, params, body),
+                environment);
     }
 
     @Override
@@ -47,7 +54,7 @@ class LoxFunction implements LoxCallable {
 
     @Override
     public String toString() {
-        return "<fn " + name + ">";
+        return "<fn " + name.lexeme + ">";
     }
 
 }

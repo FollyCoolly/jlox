@@ -45,6 +45,7 @@ import static com.zhsu.lox.TokenType.STRING;
 import static com.zhsu.lox.TokenType.TRUE;
 import static com.zhsu.lox.TokenType.VAR;
 import static com.zhsu.lox.TokenType.WHILE;
+import static com.zhsu.lox.TokenType.THIS;
 
 class Parser {
 
@@ -245,7 +246,8 @@ class Parser {
         }
         consume(RIGHT_PAREN, "Expect ')' after parameters.");
 
-        // Consuming LEFT_BRACE here lets us report a more precise error message if the LEFT_BRACE isn’t found 
+        // Consuming LEFT_BRACE here lets us report a more precise error message if the
+        // LEFT_BRACE isn’t found
         consume(LEFT_BRACE, "Expect '{' before " + kind + " body.");
         List<Stmt> body = block();
         return new Stmt.Function(name, parameters, body);
@@ -297,7 +299,8 @@ class Parser {
                 return new Expr.Set(get.object, get.name, value);
             }
 
-            //  we don’t throw it because the parser isn’t in a confused state where we need to go into panic mode and synchronize.
+            // we don’t throw it because the parser isn’t in a confused state where we need
+            // to go into panic mode and synchronize.
             error(equals, "Invalid assignment target.");
         }
 
@@ -434,6 +437,9 @@ class Parser {
         if (match(NUMBER, STRING)) {
             return new Expr.Literal(previous().literal);
         }
+
+        if (match(THIS))
+            return new Expr.This(previous());
 
         if (match(IDENTIFIER)) {
             return new Expr.Variable(previous());
