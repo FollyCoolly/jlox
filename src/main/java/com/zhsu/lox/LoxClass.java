@@ -3,21 +3,30 @@ package com.zhsu.lox;
 import java.util.List;
 import java.util.Map;
 
-class LoxClass implements LoxCallable {
+class LoxClass extends LoxInstance implements LoxCallable {
 
     final String name;
     final Map<String, LoxFunction> methods;
+    final Map<String, LoxFunction> staticMethods;
 
-    LoxClass(String name, Map<String, LoxFunction> methods) {
+    LoxClass(String name, Map<String, LoxFunction> methods, Map<String, LoxFunction> staticMethods) {
+        super(null);
         this.name = name;
         this.methods = methods;
+        this.staticMethods = staticMethods;
     }
 
     LoxFunction findMethod(String name) {
         if (methods.containsKey(name)) {
             return methods.get(name);
         }
+        return null;
+    }
 
+    LoxFunction findStaticMethod(String name) {
+        if (staticMethods.containsKey(name)) {
+            return staticMethods.get(name);
+        }
         return null;
     }
 
@@ -43,5 +52,16 @@ class LoxClass implements LoxCallable {
         if (initializer == null)
             return 0;
         return initializer.arity();
+    }
+
+    @Override
+    Object get(Token name) {
+        // First check for static methods
+        LoxFunction staticMethod = findStaticMethod(name.lexeme);
+        if (staticMethod != null) {
+            return staticMethod;
+        }
+        throw new RuntimeError(name,
+                "Undefined property '" + name.lexeme + "'.");
     }
 }

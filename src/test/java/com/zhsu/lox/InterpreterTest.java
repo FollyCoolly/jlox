@@ -6,30 +6,30 @@ import org.junit.jupiter.api.Test;
 
 public class InterpreterTest {
 
-    @Test
-    public void testInterpreter() {
-        String input = """
-                class Bacon {
-                  eat() {
-                    print "Crunch crunch crunch!";
-                  }
-                }
+  @Test
+  public void testInterpreter() {
+    String input = """
+        class Math {
+          class square(n) {
+            return n * n;
+          }
+        }
 
-                Bacon().eat();
-                            """;
+        print Math.square(3);
+                                    """;
 
-        Scanner scanner = new Scanner(input);
+    Scanner scanner = new Scanner(input);
 
-        List<Token> tokens = scanner.scanTokens();
+    List<Token> tokens = scanner.scanTokens();
 
-        Parser parser = new Parser(tokens);
-        List<Stmt> statements = parser.parse();
+    Parser parser = new Parser(tokens);
+    List<Stmt> statements = parser.parse();
 
-        Interpreter interpreter = new Interpreter();
+    Interpreter interpreter = new Interpreter();
 
-        Resolver resolver = new Resolver(interpreter);
-        resolver.resolve(statements);
+    Resolver resolver = new Resolver(interpreter);
+    resolver.resolve(statements);
 
-        interpreter.interpret(statements);
-    }
+    interpreter.interpret(statements);
+  }
 }

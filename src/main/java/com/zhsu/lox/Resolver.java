@@ -28,7 +28,8 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         NONE,
         FUNCTION,
         INITIALIZER,
-        METHOD
+        METHOD,
+        STATIC
     }
 
     private enum ClassType {
@@ -146,6 +147,9 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
                 declaration = FunctionType.INITIALIZER;
             }
             resolveFunction(method, declaration);
+        }
+        for (Stmt.Function method : stmt.staticMethods) {
+            resolveFunction(method, FunctionType.STATIC);
         }
 
         endScope();
