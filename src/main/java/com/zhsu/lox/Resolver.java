@@ -78,7 +78,7 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     private void endScope() {
         Map<String, VariableDeclaration> scope = scopes.pop();
         for (VariableDeclaration decl : scope.values()) {
-            if (!decl.isUsed) {
+            if (!decl.isUsed && decl.token.type != TokenType.THIS) {
                 Lox.error(decl.token,
                         "Local variable '" + decl.token.lexeme + "' is declared but never used.");
             }
