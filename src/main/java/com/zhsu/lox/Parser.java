@@ -237,6 +237,16 @@ class Parser {
 
     private Stmt.Function function(String kind) {
         Token name = consume(IDENTIFIER, "Expect " + kind + " name.");
+
+        // Check if this is a getter (no parentheses)
+        boolean isGetter = false;
+        if (!check(LEFT_PAREN)) {
+            isGetter = true;
+            consume(LEFT_BRACE, "Expect '{' before " + kind + " body.");
+            List<Stmt> body = block();
+            return new Stmt.Function(name, new ArrayList<>(), body, isGetter);
+        }
+
         consume(LEFT_PAREN, "Expect '(' after " + kind + " name.");
         List<Token> parameters = new ArrayList<>();
         if (!check(RIGHT_PAREN)) {
@@ -255,7 +265,7 @@ class Parser {
         // LEFT_BRACE isn’t found
         consume(LEFT_BRACE, "Expect '{' before " + kind + " body.");
         List<Stmt> body = block();
-        return new Stmt.Function(name, parameters, body);
+        return new Stmt.Function(name, parameters, body, isGetter);
     }
 
     private List<Stmt> block() {

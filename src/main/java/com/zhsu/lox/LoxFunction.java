@@ -9,6 +9,7 @@ class LoxFunction implements LoxCallable {
     private final Environment closure;
     private final Token name;
     private final boolean isInitializer;
+    private final boolean isGetter;
 
     LoxFunction(Stmt.Function declaration, Environment closure, boolean isInitializer) {
         this.name = declaration.name;
@@ -16,6 +17,7 @@ class LoxFunction implements LoxCallable {
         this.body = declaration.body;
         this.closure = closure;
         this.isInitializer = isInitializer;
+        this.isGetter = declaration.isGetter;
     }
 
     LoxFunction(Expr.Lambda lambda, Environment closure) {
@@ -24,12 +26,13 @@ class LoxFunction implements LoxCallable {
         this.body = lambda.body;
         this.closure = closure;
         this.isInitializer = false;
+        this.isGetter = false;
     }
 
     LoxFunction bind(LoxInstance instance) {
         Environment environment = new Environment(closure);
         environment.define("this", instance);
-        return new LoxFunction(new Stmt.Function(name, params, body),
+        return new LoxFunction(new Stmt.Function(name, params, body, isGetter),
                 environment, isInitializer);
     }
 
@@ -62,6 +65,10 @@ class LoxFunction implements LoxCallable {
     @Override
     public String toString() {
         return "<fn " + name.lexeme + ">";
+    }
+
+    boolean isGetter() {
+        return isGetter;
     }
 
 }
