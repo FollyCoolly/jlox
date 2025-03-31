@@ -9,19 +9,16 @@ public class InterpreterTest {
   @Test
   public void testInterpreter() {
     String input = """
-        class Circle {
-          init(radius) {
-            this.radius = radius;
-          }
-
-          area {
-            return 3.141592653 * this.radius * this.radius;
+        class Doughnut {
+          cook() {
+            print "Fry until golden brown.";
           }
         }
 
-        var circle = Circle(4);
-        print circle.area;
-                                            """;
+        class BostonCream < Doughnut {}
+
+        BostonCream().cook();
+                                                    """;
 
     Scanner scanner = new Scanner(input);
 
