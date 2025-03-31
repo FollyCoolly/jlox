@@ -46,6 +46,7 @@ import static com.zhsu.lox.TokenType.TRUE;
 import static com.zhsu.lox.TokenType.VAR;
 import static com.zhsu.lox.TokenType.WHILE;
 import static com.zhsu.lox.TokenType.THIS;
+import static com.zhsu.lox.TokenType.SUPER;
 
 class Parser {
 
@@ -458,6 +459,14 @@ class Parser {
 
         if (match(NUMBER, STRING)) {
             return new Expr.Literal(previous().literal);
+        }
+
+        if (match(SUPER)) {
+            Token keyword = previous();
+            consume(DOT, "Expect '.' after 'super'.");
+            Token method = consume(IDENTIFIER,
+                    "Expect superclass method name.");
+            return new Expr.Super(keyword, method);
         }
 
         if (match(THIS))

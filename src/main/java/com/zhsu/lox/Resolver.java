@@ -78,7 +78,7 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     private void endScope() {
         Map<String, VariableDeclaration> scope = scopes.pop();
         for (VariableDeclaration decl : scope.values()) {
-            if (!decl.isUsed && decl.token.type != TokenType.THIS) {
+            if (!decl.isUsed && decl.token.type != TokenType.THIS && decl.token.type != TokenType.SUPER) {
                 Lox.error(decl.token,
                         "Local variable '" + decl.token.lexeme + "' is declared but never used.");
             }
@@ -144,6 +144,14 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
             resolve(stmt.superclass);
         }
 
+        if (stmt.superclass != null) {
+            beginScope();
+            VariableDeclaration decl = new VariableDeclaration(
+                    new Token(TokenType.SUPER, "super", null, 0));
+            decl.isDefined = true;
+            scopes.peek().put("super", decl);
+        }
+
         beginScope();
 
         VariableDeclaration decl = new VariableDeclaration(
@@ -163,6 +171,9 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         }
 
         endScope();
+
+        if (stmt.superclass != null)
+            endScope();
 
         currentClass = enclosingClass;
         return null;
@@ -281,6 +292,12 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     public Void visitSetExpr(Expr.Set expr) {
         resolve(expr.value);
         resolve(expr.object);
+        return null;
+    }
+
+    @Override
+    public Void visitSuperExpr(Expr.Super expr) {
+        resolveLocal(expr, expr.keyword);
         return null;
     }
 
